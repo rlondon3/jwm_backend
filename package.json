@@ -1,0 +1,24 @@
+{
+	"name": "jwm-backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/server.ts",
+	"scripts": {
+		"start": "node build/server.js",
+		"watch": "ENV=dev tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
+		"test": "db-migrate --env test up && mocha ./**/*_spec.js --exit && db-migrate --env test reset",
+		"build": "tsc",
+		"watch-console": "ENV=console node build/src/console.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"ts-node": "^10.9.2",
+		"tsc-watch": "^6.2.0",
+		"typescript": "^5.5.4"
+	},
+	"dependencies": {
+		"tslib": "^2.7.0"
+	}
+}
