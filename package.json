@@ -8,7 +8,11 @@
 		"watch": "ENV=dev tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
 		"test": "db-migrate --env test up && mocha ./**/*_spec.js --exit && db-migrate --env test reset",
 		"build": "tsc",
-		"watch-console": "ENV=console node build/src/console.js"
+		"watch-console": "ENV=console node build/src/console.js",
+		"start-docker": "docker compose start",
+		"stop-docker": "docker compose stop",
+		"docker-up": "docker compose up",
+		"docker-down": "docker compose down"
 	},
 	"keywords": [],
 	"author": "",
