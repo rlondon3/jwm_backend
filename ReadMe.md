@@ -58,5 +58,5 @@ This platform has allowed me to stay organized, maintain focus, and continuously
 If you have any questions or would like to discuss this project further, please feel free to reach out:
 
 - **Email**: codesmithr@outlook.com
-- **LinkedIn**: [Your LinkedIn Profile](https://www.linkedin.com/in/raphael-smith-b91a65206/)
+- **LinkedIn**: [LinkedIn Profile](https://www.linkedin.com/in/raphael-smith-b91a65206/)
 - **Cloud Resume**: https://ralphscloudresume.com
