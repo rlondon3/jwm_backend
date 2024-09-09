@@ -23,7 +23,7 @@ The journey has been an exciting challenge, allowing me to deepen my understandi
 - **Express.js**: A minimalist web framework for Node.js used to build RESTful APIs.
 - **PostgreSQL**: A powerful, open-source relational database system.
 - **Docker**: Containerization of the PostgreSQL database to ensure a consistent development environment.
-- **Mocha/Chai**: Unit testing framework and assertion library for Node.js.
+- **Jasmine**: Unit testing framework and assertion library for Node.js.
 - **CI/CD**: Automated pipelines using GitHub Actions.
 - **AWS**: S3 for serving frontend assets, Route 53 for DNS management.
 - **Terraform**: Infrastructure as Code (IaC) for managing AWS resources.
@@ -36,7 +36,7 @@ The journey has been an exciting challenge, allowing me to deepen my understandi
 - **Session Management**: Schedule and manage Zoom lessons or video correspondence directly from the content.
 - **Progress Tracking**: Monitor user progress through chapters and multimedia content.
 - **Scalable Infrastructure**: Dockerized PostgreSQL and automated deployments using Terraform and GitHub Actions.
-- **Comprehensive Testing**: Unit tests written in Mocha/Chai for backend services.
+- **Comprehensive Testing**: Unit tests written in Jasmine for backend services.
 
 ## **Project Management**
 

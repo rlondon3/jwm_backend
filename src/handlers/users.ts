@@ -130,7 +130,7 @@ const users_route = (app: express.Application) => {
 	app.post('/verify/user/:id', authenticationToken, show);
 	app.post('/create/user', create);
 	app.put('/user/:id', authenticateUserId, update);
-	app.delete('/useR/:id', authenticateUserId, deletes);
+	app.delete('/user/:id', authenticateUserId, deletes);
 	app.post('/user/authenticate', authenticate);
 };
 
