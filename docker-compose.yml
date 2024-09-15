@@ -6,9 +6,12 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: postgres # Use the system database to create others
+      POSTGRES_DB: postgres
     ports:
       - '${DB_PORT}:5432'
+    networks:
+      app_network:
+        ipv4_address: ${POSTGRES_HOST}
     volumes:
       - ./init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
       - postgres_data_${ENV}:/var/lib/postgresql/data
@@ -22,6 +25,15 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - '5050:80'
+    networks:
+      app_network:
+        ipv4_address: ${PGADMIN_HOST}
+
+networks:
+  app_network:
+    ipam:
+      config:
+        - subnet: ${APP_NETWORK}
 
 volumes:
   postgres_data_dev:
