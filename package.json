@@ -9,7 +9,7 @@
 	"scripts": {
 		"start": "node build/dist/server.js",
 		"dev": "ENV=dev tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
-		"test": "db-migrate up:test --verbose && jasmine ./**/**/*_spec.js && db-migrate reset:test",
+		"test": "db-migrate up:test --env test --verbose && jasmine ./**/**/*_spec.js && db-migrate reset:test --env test",
 		"build": "tsc",
 		"watch-console": "ENV=console node build/src/console.js",
 		"start-docker": "docker compose start",
