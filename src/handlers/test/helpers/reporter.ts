@@ -17,6 +17,7 @@ jasmine.getEnv().addReporter(
 	new SpecReporter({
 		spec: {
 			displayStacktrace: StacktraceOption.NONE,
+			displayPending: true,
 		},
 		customProcessors: [CustomProcessor],
 	})
