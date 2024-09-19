@@ -26,6 +26,12 @@ jobs:
         with:
           version: 9.5.0
 
+      - name: Show current directory
+        run: |
+          echo "Current directory is: $(pwd)"
+          echo "Listing the contents:"
+          ls -la
+
       - name: Install Backend dependencies
         run: |
           cd jwm-backend
