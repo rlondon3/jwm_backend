@@ -17,8 +17,6 @@ jobs:
         image: postgres:latest
         options: >
           --health-cmd="pg_isready -U POSTGRES_USER"
-          --health-interval=10s
-          --health-timeout=5s
         env:
           POSTGRES_USER: POSTGRES_USER
           POSTGRES_PASSWORD: POSTGRES_PASSWORD
