@@ -70,6 +70,10 @@ jobs:
           npm install -g pnpm
           pnpm install
 
+      - name: Create Test Database
+        run: |
+          docker exec -it postgres_test_db psql -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB_TEST;"
+
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h localhost -p 5432 -U POSTGRES_USER; do
