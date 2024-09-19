@@ -80,7 +80,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U POSTGRES_USER; do
+          until pg_isready -h postgres_container -p 5432 -U POSTGRES_USER; do
           echo "PostgreSQL is not ready yet"
           sleep 5
           done
