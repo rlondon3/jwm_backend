@@ -39,5 +39,4 @@ jobs:
 
       - name: Run Backend tests
         run: |
-          cd Backend
           pnpm test
