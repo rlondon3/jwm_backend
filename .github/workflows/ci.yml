@@ -76,7 +76,7 @@ jobs:
 
       - name: Create Test Database
         run: |
-          docker exec -it postgres_container psql -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB_TEST;"
+          docker exec -T postgres_container psql -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB_TEST;"
 
       - name: Wait for PostgreSQL to be ready
         run: |
