@@ -42,9 +42,9 @@ jobs:
       PGADMIN_DEFAULT_EMAIL: PGADMIN_DEFAULT_EMAIL
       PGADMIN_DEFAULT_PASSWORD: PGADMIN_DEFAULT_PASSWORD
       DB_PORT: DB_PORT
-      TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-      SALT_ROUNDS: ${{ secrets.SALT_ROUNDS }}
-      PEPPER: ${{ secrets.PEPPER }}
+      TOKEN_SECRET: TOKEN_SECRET
+      SALT_ROUNDS: SALT_ROUNDS
+      PEPPER: PEPPER
 
     steps:
       - name: Checkout repository
@@ -70,6 +70,13 @@ jobs:
         run: |
           npm install -g pnpm
           pnpm install
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U POSTGRES_USER; do
+          echo "PostgreSQL is not ready yet"
+          sleep 5
+          done
 
       - name: Run Backend tests
         run: |
