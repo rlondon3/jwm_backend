@@ -89,7 +89,7 @@ jobs:
           docker logs postgres_container
       - name: Create Test Database
         run: |
-          docker exec postgres_container sh -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h localhost -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
+          docker exec postgres_container sh -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h postgres_container -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
 
       - name: Run Backend tests
         run: |
