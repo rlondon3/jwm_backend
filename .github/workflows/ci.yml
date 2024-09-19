@@ -28,7 +28,7 @@ jobs:
 
       - name: Install Backend dependencies
         run: |
-          cd Backend
+          cd jwm-backend
           npm install -g pnpm
           pnpm install
 
