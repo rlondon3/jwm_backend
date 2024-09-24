@@ -84,9 +84,11 @@ jobs:
           echo "PostgreSQL is not ready yet"
           sleep 5
           done
-      - name: Check PostgreSQL Logs
+      - name: Log PostgreSQL Host
         run: |
-          docker logs postgres_container
+          echo "Getting PostgreSQL host address..."
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -c 'SHOW listen_addresses;'"
+
       - name: Create Test Database
         run: |
           docker exec postgres_container sh -c "echo \$POSTGRES_USER; echo \$POSTGRES_PASSWORD; echo \$POSTGRES_DB_TEST; echo \postgres_container;"
