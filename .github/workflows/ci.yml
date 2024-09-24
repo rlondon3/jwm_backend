@@ -17,7 +17,6 @@ jobs:
         image: postgres:latest
         options: >
           --health-cmd="pg_isready -U POSTGRES_USER"
-           --network app_network
           --ip POSTGRES_HOST
         env:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
