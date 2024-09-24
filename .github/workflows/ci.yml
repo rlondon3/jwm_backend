@@ -97,10 +97,6 @@ jobs:
         run: |
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
 
-      - name: DB-MIGRATE
-        run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "db-migrate up"
-
       - name: Run Backend tests
         run: |
           pnpm test
