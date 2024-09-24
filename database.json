@@ -12,6 +12,7 @@
 		"database": { "ENV": "POSTGRES_DB_TEST" },
 		"user": { "ENV": "POSTGRES_USER" },
 		"password": { "ENV": "POSTGRES_PASSWORD" },
-		"port": "5432",
+		"port": "5432"
+	},
 	"sql-file": true
 }
