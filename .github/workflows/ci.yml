@@ -33,17 +33,17 @@ jobs:
 
     env:
       POSTGRES_HOST: localhost
-      POSTGRES_DB: POSTGRES_DB
-      POSTGRES_DB_TEST: POSTGRES_DB_TEST
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_DB_TEST: ${{ vars.POSTGRES_DB_TEST }}
       POSTGRES_DB_PROD: POSTGRES_DB_PROD
-      POSTGRES_USER: POSTGRES_USER
-      POSTGRES_PASSWORD: POSTGRES_PASSWORD
-      PGADMIN_DEFAULT_EMAIL: PGADMIN_DEFAULT_EMAIL
-      PGADMIN_DEFAULT_PASSWORD: PGADMIN_DEFAULT_PASSWORD
-      DB_PORT: DB_PORT
-      TOKEN_SECRET: TOKEN_SECRET
-      SALT_ROUNDS: SALT_ROUNDS
-      PEPPER: PEPPER
+      POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+      PGADMIN_DEFAULT_EMAIL: ${{ vars.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ vars.PGADMIN_DEFAULT_PASSWORD }}
+      DB_PORT: ${{ vars.DB_PORT }}
+      TOKEN_SECRET: ${{ vars.TOKEN_SECRET }}
+      SALT_ROUNDS: ${{ vars.SALT_ROUNDS }}
+      PEPPER: ${{ vars.PEPPER }}
 
     steps:
       - name: Checkout repository
@@ -76,7 +76,7 @@ jobs:
 
       - name: Start PostgreSQL Container
         run: |
-          docker run --name postgres_container --network github_network -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB -p 5433:5432 -d postgres:latest
+          docker run --name postgres_container --network github_network -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB_TEST -p 5433:5432 -d postgres:latest
 
       - name: Wait for PostgreSQL to be ready
         run: |
