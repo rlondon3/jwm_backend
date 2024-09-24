@@ -32,7 +32,7 @@ jobs:
           PGADMIN_DEFAULT_PASSWORD: ${{ env.PGADMIN_DEFAULT_PASSWORD }}
 
     env:
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: postgres_container
       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
       POSTGRES_DB_TEST: ${{ vars.POSTGRES_DB_TEST }}
       POSTGRES_DB_PROD: POSTGRES_DB_PROD
