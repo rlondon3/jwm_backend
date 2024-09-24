@@ -80,7 +80,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "pg_isready -h postgres_container -p 5432 -U $POSTGRES_USER"; do
+          until docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "pg_isready -h $POSTGRES_HOST -p 5432 -U $POSTGRES_USER"; do
           echo "PostgreSQL is not ready yet"
           sleep 5
           done
@@ -92,12 +92,12 @@ jobs:
       - name: Create Test Database
         run: |
           docker exec postgres_container sh -c "echo \$POSTGRES_USER; echo \$POSTGRES_PASSWORD; echo \$POSTGRES_DB_TEST; echo \postgres_container;"
-          docker exec postgres_container sh -c "pg_isready -U $POSTGRES_USER -h postgres_container -p 5432"
-          docker exec postgres_container sh -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h postgres_container -p 5432 -c '\l'"
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
+          docker exec postgres_container sh -c "pg_isready -U $POSTGRES_USER -h $POSTGRES_HOST -p 5432"
+          docker exec postgres_container sh -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h $POSTGRES_HOST -p 5432 -c '\l'"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h $POSTGRES_HOST -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
       - name: Verify Test Database
         run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h $POSTGRES_HOST -p 5432 -l"
 
       - name: Run Backend tests
         run: |
