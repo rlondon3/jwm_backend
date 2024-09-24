@@ -97,9 +97,9 @@ jobs:
         run: |
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
 
-      - name: Get PostgreSQL Host Value from Container
+      - name: DB-MIGRATE
         run: |
-          echo "Host: $(docker exec postgres_container psql -U $POSTGRES_USER -d $POSTGRES_DB_TEST -c 'SHOW host;' | grep -v '^ host' | grep -v '^-')"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "db-migrate up"
 
       - name: Run Backend tests
         run: |
