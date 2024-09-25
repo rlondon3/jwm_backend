@@ -44,6 +44,7 @@ jobs:
       TOKEN_SECRET: ${{ vars.TOKEN_SECRET }}
       SALT_ROUNDS: ${{ vars.SALT_ROUNDS }}
       PEPPER: ${{ vars.PEPPER }}
+      ENV: ${{ VARS.ENV }}
 
     steps:
       - name: Checkout repository
