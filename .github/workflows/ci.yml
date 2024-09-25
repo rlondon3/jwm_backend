@@ -98,18 +98,6 @@ jobs:
         run: |
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
 
-      - name: Get PostgreSQL Container ID
-        id: get_container_id
-        run: |
-          echo "PostgreSQL Container ID:"
-          CONTAINER_ID=$(docker ps -q --filter "name=postgres_container")
-          echo "Container ID: $CONTAINER_ID"
-          echo "::set-output name=container_id::$CONTAINER_ID"
-
-      - name: Check Container Connection
-        run: |
-          pnpm docker-container
-
       - name: Run Backend tests
         run: |
           pnpm test
