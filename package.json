@@ -16,7 +16,8 @@
 		"start-docker": "docker compose start",
 		"stop-docker": "docker compose stop",
 		"docker-up": "docker compose up --build",
-		"docker-down": "docker compose down"
+		"docker-down": "docker compose down",
+		"docker-container": "docker contaienr ls"
 	},
 	"keywords": [],
 	"author": "",
