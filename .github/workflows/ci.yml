@@ -103,7 +103,7 @@ jobs:
       - name: Verify Test Database and List Tables
         run: |
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -lqt | cut -d \| -f 1 | grep -w $POSTGRES_DB_TEST || echo 'Database not found: $POSTGRES_DB_TEST'"
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB -c '\dt'"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d postgres -c '\dt'"
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c 'DROP TABLE IF EXISTS migrations CASCADE;'"
 
       - name: Run Backend tests
