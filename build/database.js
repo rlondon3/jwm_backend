@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const dotenv = tslib_1.__importStar(require("dotenv"));
 const pg_1 = require("pg");
 dotenv.config();
-const { POSTGRES_HOST, POSTGRES_DB, POSTGRES_DB_TEST, POSTGRES_DB_PROD, POSTGRES_USER, POSTGRES_PASSWORD, DB_PORT, ENV, } = process.env;
+const { POSTGRES_HOST, POSTGRES_DB, POSTGRES_DB_TEST, POSTGRES_DB_PROD, POSTGRES_USER, POSTGRES_PASSWORD, DB_PORT, DB_TEST_PORT, ENV, } = process.env;
 console.log(`Environment is currently running in ${ENV} mode...`);
 // const createUserTableSQL = `
 //     CREATE TABLE IF NOT EXISTS users (
@@ -49,7 +49,7 @@ else if (ENV === 'test') {
         database: POSTGRES_DB_TEST,
         user: POSTGRES_USER,
         password: POSTGRES_PASSWORD,
-        port: Number(DB_PORT),
+        port: Number(DB_TEST_PORT),
     });
 }
 else if (ENV === 'prod') {
