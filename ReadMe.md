@@ -1,6 +1,7 @@
 # **Martial Art Learning Platform - Backend**
 
 [![Node.js CI](https://github.com/rlondon3/jwm_backend/actions/workflows/ci.yml/badge.svg)](https://github.com/rlondon3/jwm_backend/actions/workflows/ci.yml)
+<br>
 Welcome to the backend repository of the Martial Art Learning Platform, an innovative project designed to create an interactive and immersive experience for martial arts enthusiasts. This platform will serve as a comprehensive resource, combining written content with multimedia elements and personalized instructor interactions.
 
 ## **Table of Contents**
