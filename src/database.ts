@@ -17,36 +17,6 @@ const {
 
 console.log(`Environment is currently running in ${ENV} mode...`);
 
-// const createUserTableSQL = `
-//     CREATE TABLE IF NOT EXISTS users (
-//         id SERIAL PRIMARY KEY,
-//         firstname VARCHAR(255) NOT NULL,
-//         lastname VARCHAR(255) NOT NULL,
-//         email VARCHAR(255) UNIQUE NOT NULL,
-//         martial_art VARCHAR(255),
-//         username VARCHAR(255) UNIQUE NOT NULL,
-//         password TEXT NOT NULL,
-//         isAdmin BOOLEAN DEFAULT FALSE
-//     );
-// `;
-
-// async function initializeDatabase(client: Pool): Promise<void> {
-// 	let conn: PoolClient | null = null;
-
-// 	try {
-// 		conn = await client.connect();
-// 		await conn.query(createUserTableSQL);
-// 		console.log('Database schema initialized successfully.');
-// 	} catch (error) {
-// 		console.error(`Database initialization failed: ${error.message}`);
-// 		throw error;
-// 	} finally {
-// 		if (conn) {
-// 			conn.release();
-// 		}
-// 	}
-// }
-
 let client = new Pool();
 
 if (ENV === 'dev') {
