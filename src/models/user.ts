@@ -48,7 +48,7 @@ export class UserStore {
 		try {
 			const conn: PoolClient = await client.connect();
 			const sql =
-				'INSERT INTO users (firstname, lastname, email, martial_art, username, age, city, country, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+				'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}.processs.env`,
 				parseInt(`${SALT_ROUNDS}.process.env` as string)
@@ -56,6 +56,9 @@ export class UserStore {
 			const res = await conn.query(sql, [
 				user.firstname,
 				user.lastname,
+				user.age,
+				user.city,
+				user.country,
 				user.email,
 				user.martial_art,
 				user.username,
@@ -72,7 +75,7 @@ export class UserStore {
 	async update(user: User, _id?: number): Promise<User> {
 		try {
 			const sql =
-				'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), age=($6), city=($7), country=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
+				'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
 			const conn: PoolClient = await client.connect();
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}`,
@@ -81,10 +84,10 @@ export class UserStore {
 			const res = await conn.query(sql, [
 				user.firstname,
 				user.lastname,
-				user.email,
 				user.age,
 				user.city,
 				user.country,
+				user.email,
 				user.martial_art,
 				user.username,
 				hash,

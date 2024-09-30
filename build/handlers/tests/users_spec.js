@@ -15,6 +15,9 @@ describe('User Handler', () => {
                 .send({
                 firstname: 'Test',
                 lastname: 'Tester',
+                age: 32,
+                city: 'Sacrament',
+                country: 'USA',
                 email: 'test@test.com',
                 martial_art: 'test',
                 username: 'testieT',
@@ -44,6 +47,9 @@ describe('User Handler', () => {
                 .send({
                 firstname: 'Test',
                 lastname: 'Tester',
+                age: 30,
+                city: 'Boston',
+                country: 'USA',
                 email: 'test@test.com',
                 martial_art: 'test',
                 username: 'testieTs',

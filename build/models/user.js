@@ -37,11 +37,14 @@ class UserStore {
     async create(user) {
         try {
             const conn = await database_1.default.connect();
-            const sql = 'INSERT INTO users (firstname, lastname, email, martial_art, username, age, city, country, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+            const sql = 'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}.processs.env`, parseInt(`${SALT_ROUNDS}.process.env`));
             const res = await conn.query(sql, [
                 user.firstname,
                 user.lastname,
+                user.age,
+                user.city,
+                user.country,
                 user.email,
                 user.martial_art,
                 user.username,
@@ -58,16 +61,16 @@ class UserStore {
     // tslint:disable-next-line: no-unused-variable
     async update(user, _id) {
         try {
-            const sql = 'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), age=($6), city=($7), country=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
+            const sql = 'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
             const conn = await database_1.default.connect();
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}`, parseInt(`${SALT_ROUNDS}`));
             const res = await conn.query(sql, [
                 user.firstname,
                 user.lastname,
-                user.email,
                 user.age,
                 user.city,
                 user.country,
+                user.email,
                 user.martial_art,
                 user.username,
                 hash,
