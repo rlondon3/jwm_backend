@@ -55,7 +55,7 @@ describe('User Validation', () => {
         });
     });
 });
-describe('UserStore create method', () => {
+describe('UserStore password hash', () => {
     it('should hash the password correctly', async () => {
         const user = {
             ...test_user,
