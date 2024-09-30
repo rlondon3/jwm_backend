@@ -2,6 +2,7 @@ import client from '../database';
 import { PoolClient } from 'pg';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
+import { object, string, number, boolean } from 'yup';
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ export type User = {
 	id?: number;
 	firstname: string;
 	lastname: string;
+	age: number;
+	city: string;
+	country: string;
 	email: string;
 	martial_art: string;
 	username: string;
@@ -44,7 +48,7 @@ export class UserStore {
 		try {
 			const conn: PoolClient = await client.connect();
 			const sql =
-				'INSERT INTO users (firstname, lastname, email, martial_art, username, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+				'INSERT INTO users (firstname, lastname, email, martial_art, username, age, city, country, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}.processs.env`,
 				parseInt(`${SALT_ROUNDS}.process.env` as string)
@@ -68,7 +72,7 @@ export class UserStore {
 	async update(user: User, _id?: number): Promise<User> {
 		try {
 			const sql =
-				'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), password=($6), isAdmin=($7) WHERE id=($8) RETURNING *';
+				'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), age=($6), city=($7), country=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
 			const conn: PoolClient = await client.connect();
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}`,
@@ -78,6 +82,9 @@ export class UserStore {
 				user.firstname,
 				user.lastname,
 				user.email,
+				user.age,
+				user.city,
+				user.country,
 				user.martial_art,
 				user.username,
 				hash,
@@ -143,4 +150,24 @@ export class UserStore {
 			conn.release();
 		}
 	}
+}
+
+export function handleUserErrors(user: User) {
+	let userSchema = object({
+		firstname: string().required(),
+		lastname: string().required(),
+		age: number().required().positive().integer(),
+		city: string().required(),
+		country: string().required(),
+		email: string().email(),
+		martial_art: string().required(),
+		password: string()
+			.required()
+			.matches(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+				'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character'
+			),
+		isAdmin: boolean().default(false),
+	});
+	return userSchema.validate(user);
 }

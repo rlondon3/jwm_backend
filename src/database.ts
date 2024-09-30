@@ -46,9 +46,4 @@ if (ENV === 'dev') {
 	throw new Error(`Invalid ENV value: ${ENV}`);
 }
 
-// initializeDatabase(client).catch((error) => {
-// 	console.error('Failed to initialize database schema:', error);
-// 	process.exit(1);
-// });
-
 export default client;

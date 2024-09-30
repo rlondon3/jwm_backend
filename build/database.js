@@ -37,9 +37,5 @@ else if (ENV === 'prod') {
 else {
     throw new Error(`Invalid ENV value: ${ENV}`);
 }
-// initializeDatabase(client).catch((error) => {
-// 	console.error('Failed to initialize database schema:', error);
-// 	process.exit(1);
-// });
 exports.default = client;
 //# sourceMappingURL=database.js.map

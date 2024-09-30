@@ -4,7 +4,8 @@
 		"host": { "ENV": "POSTGRES_HOST" },
 		"database": { "ENV": "POSTGRES_DB" },
 		"user": { "ENV": "POSTGRES_USER" },
-		"password": { "ENV": "POSTGRES_PASSWORD" }
+		"password": { "ENV": "POSTGRES_PASSWORD" },
+		"port": 5432
 	},
 	"test": {
 		"driver": "pg",

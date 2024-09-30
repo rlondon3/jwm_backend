@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserStore = void 0;
+exports.handleUserErrors = handleUserErrors;
 const tslib_1 = require("tslib");
 const database_1 = tslib_1.__importDefault(require("../database"));
 const dotenv_1 = tslib_1.__importDefault(require("dotenv"));
 const bcrypt_1 = tslib_1.__importDefault(require("bcrypt"));
+const yup_1 = require("yup");
 dotenv_1.default.config();
 const { SALT_ROUNDS, PEPPER } = process.env;
 class UserStore {
@@ -35,7 +37,7 @@ class UserStore {
     async create(user) {
         try {
             const conn = await database_1.default.connect();
-            const sql = 'INSERT INTO users (firstname, lastname, email, martial_art, username, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+            const sql = 'INSERT INTO users (firstname, lastname, email, martial_art, username, age, city, country, password, isAdmin) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}.processs.env`, parseInt(`${SALT_ROUNDS}.process.env`));
             const res = await conn.query(sql, [
                 user.firstname,
@@ -56,13 +58,16 @@ class UserStore {
     // tslint:disable-next-line: no-unused-variable
     async update(user, _id) {
         try {
-            const sql = 'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), password=($6), isAdmin=($7) WHERE id=($8) RETURNING *';
+            const sql = 'UPDATE users SET firstname=($1), lastname=($2), email=($3), martial_art=($4), username=($5), age=($6), city=($7), country=($8), password=($9), isAdmin=($10) WHERE id=($11) RETURNING *';
             const conn = await database_1.default.connect();
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}`, parseInt(`${SALT_ROUNDS}`));
             const res = await conn.query(sql, [
                 user.firstname,
                 user.lastname,
                 user.email,
+                user.age,
+                user.city,
+                user.country,
                 user.martial_art,
                 user.username,
                 hash,
@@ -133,4 +138,20 @@ class UserStore {
     }
 }
 exports.UserStore = UserStore;
+function handleUserErrors(user) {
+    let userSchema = (0, yup_1.object)({
+        firstname: (0, yup_1.string)().required(),
+        lastname: (0, yup_1.string)().required(),
+        age: (0, yup_1.number)().required().positive().integer(),
+        city: (0, yup_1.string)().required(),
+        country: (0, yup_1.string)().required(),
+        email: (0, yup_1.string)().email(),
+        martial_art: (0, yup_1.string)().required(),
+        password: (0, yup_1.string)()
+            .required()
+            .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character'),
+        isAdmin: (0, yup_1.boolean)().default(false),
+    });
+    return userSchema.validate(user);
+}
 //# sourceMappingURL=user.js.map
