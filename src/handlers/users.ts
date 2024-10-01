@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { User, UserStore } from '../models/user';
+import { User, UserStore, handleUserErrors } from '../models/user';
 import jwt from 'jsonwebtoken';
 import {
 	authenticationToken,
@@ -14,20 +14,18 @@ const store = new UserStore();
 const index = async (_req: Request, res: Response) => {
 	try {
 		const user = await store.index();
-		res.json(user);
+		return res.json(user);
 	} catch (error) {
-		res.status(400);
-		res.json(error);
+		return res.status(400).json(error);
 	}
 };
 
 const show = async (req: Request, res: Response) => {
 	try {
 		const user = await store.show(parseInt(req.params.id));
-		res.json(user);
+		return res.json(user);
 	} catch (error) {
-		res.status(400);
-		res.json(error);
+		return res.status(400).json(error);
 	}
 };
 
@@ -44,10 +42,13 @@ const create = async (req: Request, res: Response) => {
 		password: req.body.password,
 		isAdmin: req.body.isAdmin,
 	};
+
 	try {
-		// Check if the email and username already exist
+		await handleUserErrors(user);
+
 		const emailExists = await store.emailExists(user.email);
 		const usernameExists = await store.usernameExists(user.username);
+
 		if (emailExists) {
 			return res.status(400).json({ error: 'Email already exists!' });
 		}
@@ -65,7 +66,10 @@ const create = async (req: Request, res: Response) => {
 
 		return res.json(token);
 	} catch (error) {
-		return res.status(400).json(error);
+		if (error.name === 'ValidationError') {
+			return res.status(400).json({ error: error.message });
+		}
+		return res.status(500).json({ error: 'Something went wrong' });
 	}
 };
 
@@ -84,6 +88,8 @@ const update = async (req: Request, res: Response) => {
 		isAdmin: req.body.isAdmin,
 	};
 	try {
+		await handleUserErrors(user);
+
 		const updates = await store.update(user);
 		const token = jwt.sign(
 			{
@@ -91,20 +97,21 @@ const update = async (req: Request, res: Response) => {
 			},
 			`${process.env.TOKEN_SECRET}` as jwt.Secret
 		);
-		res.status(200).json(token);
+		return res.status(200).json(token);
 	} catch (error) {
-		res.status(400);
-		res.json(error);
+		if (error.name === 'ValidationError') {
+			return res.status(400).json({ error: error.message });
+		}
+		return res.status(500).json({ error: 'Something went wrong' });
 	}
 };
 
 const deletes = async (req: Request, res: Response) => {
 	try {
 		const deleteUser = await store.delete(parseInt(req.params.id));
-		res.json(deleteUser);
+		return res.json(deleteUser);
 	} catch (error) {
-		res.status(400);
-		res.json(error);
+		return res.status(400).json(error);
 	}
 };
 
@@ -123,11 +130,10 @@ const authenticate = async (req: Request, res: Response) => {
 				},
 				`${process.env.TOKEN_SECRET}` as jwt.Secret
 			);
-			res.json(token);
+			return res.json(token);
 		}
 	} catch (error) {
-		res.status(400);
-		res.json(error);
+		return res.status(400).json(error);
 	}
 };
 

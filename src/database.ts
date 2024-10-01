@@ -32,7 +32,7 @@ if (ENV === 'dev') {
 		database: POSTGRES_DB_TEST,
 		user: POSTGRES_USER,
 		password: POSTGRES_PASSWORD,
-		port: 5433,
+		port: 5432,
 	});
 } else if (ENV === 'prod') {
 	client = new Pool({

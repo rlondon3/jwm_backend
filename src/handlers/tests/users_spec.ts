@@ -21,7 +21,7 @@ describe('User Handler', () => {
 					email: 'test@test.com',
 					martial_art: 'test',
 					username: 'testieT',
-					password: 'Test1234',
+					password: 'Test1234!',
 					isAdmin: false,
 				})
 				.set('Accepted', 'application/json');
@@ -53,7 +53,7 @@ describe('User Handler', () => {
 					email: 'test@test.com',
 					martial_art: 'test',
 					username: 'testieTs',
-					password: 'Test1234',
+					password: 'Test1234!',
 					isAdmin: false,
 				})
 				.set('Accepted', 'application/json');

@@ -10,21 +10,19 @@ const store = new user_1.UserStore();
 const index = async (_req, res) => {
     try {
         const user = await store.index();
-        res.json(user);
+        return res.json(user);
     }
     catch (error) {
-        res.status(400);
-        res.json(error);
+        return res.status(400).json(error);
     }
 };
 const show = async (req, res) => {
     try {
         const user = await store.show(parseInt(req.params.id));
-        res.json(user);
+        return res.json(user);
     }
     catch (error) {
-        res.status(400);
-        res.json(error);
+        return res.status(400).json(error);
     }
 };
 const create = async (req, res) => {
@@ -41,7 +39,7 @@ const create = async (req, res) => {
         isAdmin: req.body.isAdmin,
     };
     try {
-        // Check if the email and username already exist
+        await (0, user_1.handleUserErrors)(user);
         const emailExists = await store.emailExists(user.email);
         const usernameExists = await store.usernameExists(user.username);
         if (emailExists) {
@@ -57,7 +55,10 @@ const create = async (req, res) => {
         return res.json(token);
     }
     catch (error) {
-        return res.status(400).json(error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'Something went wrong' });
     }
 };
 const update = async (req, res) => {
@@ -75,25 +76,27 @@ const update = async (req, res) => {
         isAdmin: req.body.isAdmin,
     };
     try {
+        await (0, user_1.handleUserErrors)(user);
         const updates = await store.update(user);
         const token = jsonwebtoken_1.default.sign({
             user: updates,
         }, `${process.env.TOKEN_SECRET}`);
-        res.status(200).json(token);
+        return res.status(200).json(token);
     }
     catch (error) {
-        res.status(400);
-        res.json(error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'Something went wrong' });
     }
 };
 const deletes = async (req, res) => {
     try {
         const deleteUser = await store.delete(parseInt(req.params.id));
-        res.json(deleteUser);
+        return res.json(deleteUser);
     }
     catch (error) {
-        res.status(400);
-        res.json(error);
+        return res.status(400).json(error);
     }
 };
 const authenticate = async (req, res) => {
@@ -106,12 +109,11 @@ const authenticate = async (req, res) => {
             const token = jsonwebtoken_1.default.sign({
                 user: authUser,
             }, `${process.env.TOKEN_SECRET}`);
-            res.json(token);
+            return res.json(token);
         }
     }
     catch (error) {
-        res.status(400);
-        res.json(error);
+        return res.status(400).json(error);
     }
 };
 const users_route = (app) => {
