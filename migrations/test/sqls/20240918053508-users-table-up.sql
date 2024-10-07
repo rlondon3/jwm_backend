@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS users (
         isAdmin BOOLEAN DEFAULT FALSE, 
         subscription_start TIMESTAMP,
         subscription_end TIMESTAMP,
-        progress INTEGER DEFAULT 0   
+        progress INTEGER DEFAULT 0,
+        active BOOLEAN   
         );

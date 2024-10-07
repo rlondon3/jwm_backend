@@ -19,6 +19,7 @@ const test_user: User = {
 		new Date().setFullYear(new Date().getFullYear() + 1)
 	), // One year from start
 	progress: 0,
+	active: true,
 };
 
 describe('UserStore Model', () => {
@@ -86,6 +87,13 @@ describe('User Validation', () => {
 			expect(err.errors).toContain(
 				'progress must be less than or equal to 100'
 			);
+		});
+	});
+	it('should fail for active set to undefined', async () => {
+		// Set progress to an invalid value (e.g., 110)
+		test_user.active = undefined;
+		await handleUserErrors(test_user).catch((err) => {
+			expect(err.errors[0]).toContain('active is a required field');
 		});
 	});
 });

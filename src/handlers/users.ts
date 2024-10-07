@@ -44,6 +44,7 @@ const create = async (req: Request, res: Response) => {
 		subscription_start: req.body.subscription_start,
 		subscription_end: req.body.subscription_end,
 		progress: req.body.progress,
+		active: req.body.active,
 	};
 
 	try {
@@ -92,6 +93,7 @@ const update = async (req: Request, res: Response) => {
 		subscription_start: req.body.subscription_start,
 		subscription_end: req.body.subscription_end,
 		progress: req.body.progress,
+		active: req.body.active,
 	};
 	try {
 		await handleUserErrors(user);

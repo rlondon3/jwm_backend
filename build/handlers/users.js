@@ -40,6 +40,7 @@ const create = async (req, res) => {
         subscription_start: req.body.subscription_start,
         subscription_end: req.body.subscription_end,
         progress: req.body.progress,
+        active: req.body.active,
     };
     try {
         await (0, user_1.handleUserErrors)(user);
@@ -80,6 +81,7 @@ const update = async (req, res) => {
         subscription_start: req.body.subscription_start,
         subscription_end: req.body.subscription_end,
         progress: req.body.progress,
+        active: req.body.active,
     };
     try {
         await (0, user_1.handleUserErrors)(user);

@@ -26,6 +26,7 @@ describe('User Handler', () => {
                 subscription_start: new Date(),
                 subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
                 progress: 0,
+                active: true,
             })
                 .set('Accepted', 'application/json');
             token = 'Bearer ' + res.body;
@@ -61,6 +62,7 @@ describe('User Handler', () => {
                 subscription_start: new Date(),
                 subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
                 progress: 0,
+                active: true,
             })
                 .set('Accepted', 'application/json');
             expect(res.status).toEqual(200);

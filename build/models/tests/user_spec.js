@@ -18,6 +18,7 @@ const test_user = {
     subscription_start: new Date(),
     subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // One year from start
     progress: 0,
+    active: true,
 };
 describe('UserStore Model', () => {
     it('should have an index method', () => {
@@ -69,6 +70,13 @@ describe('User Validation', () => {
         test_user.progress = 110;
         await (0, user_1.handleUserErrors)(test_user).catch((err) => {
             expect(err.errors).toContain('progress must be less than or equal to 100');
+        });
+    });
+    it('should fail for active set to undefined', async () => {
+        // Set progress to an invalid value (e.g., 110)
+        test_user.active = undefined;
+        await (0, user_1.handleUserErrors)(test_user).catch((err) => {
+            expect(err.errors[0]).toContain('active is a required field');
         });
     });
 });
