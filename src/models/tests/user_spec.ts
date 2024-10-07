@@ -14,6 +14,11 @@ const test_user: User = {
 	username: 'boxer_123',
 	password: 'Store1234!',
 	isAdmin: false,
+	subscription_start: new Date(),
+	subscription_end: new Date(
+		new Date().setFullYear(new Date().getFullYear() + 1)
+	), // One year from start
+	progress: 0,
 };
 
 describe('UserStore Model', () => {
@@ -61,6 +66,25 @@ describe('User Validation', () => {
 		await handleUserErrors(test_user).catch((err) => {
 			expect(err.errors).toContain(
 				'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character'
+			);
+		});
+	});
+	it('should fail for subscription_end before subscription_start', async () => {
+		// Set subscription_end to a past date before subscription_start
+		test_user.subscription_end = new Date('2020-01-01');
+		await handleUserErrors(test_user).catch((err) => {
+			expect(err.errors[0]).toContain(
+				'Subscription end date must be after the start date'
+			);
+		});
+	});
+
+	it('should fail for progress out of range', async () => {
+		// Set progress to an invalid value (e.g., 110)
+		test_user.progress = 110;
+		await handleUserErrors(test_user).catch((err) => {
+			expect(err.errors).toContain(
+				'progress must be less than or equal to 100'
 			);
 		});
 	});

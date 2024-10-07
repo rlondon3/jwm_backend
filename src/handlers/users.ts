@@ -41,6 +41,9 @@ const create = async (req: Request, res: Response) => {
 		username: req.body.username,
 		password: req.body.password,
 		isAdmin: req.body.isAdmin,
+		subscription_start: req.body.subscription_start,
+		subscription_end: req.body.subscription_end,
+		progress: req.body.progress,
 	};
 
 	try {
@@ -69,7 +72,7 @@ const create = async (req: Request, res: Response) => {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.message });
 		}
-		return res.status(500).json({ error: 'Something went wrong' });
+		return res.status(500).json({ error: error.message });
 	}
 };
 
@@ -86,6 +89,9 @@ const update = async (req: Request, res: Response) => {
 		username: req.body.username,
 		password: req.body.password,
 		isAdmin: req.body.isAdmin,
+		subscription_start: req.body.subscription_start,
+		subscription_end: req.body.subscription_end,
+		progress: req.body.progress,
 	};
 	try {
 		await handleUserErrors(user);
@@ -102,7 +108,7 @@ const update = async (req: Request, res: Response) => {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.message });
 		}
-		return res.status(500).json({ error: 'Something went wrong' });
+		return res.status(500).json({ error: error.message });
 	}
 };
 

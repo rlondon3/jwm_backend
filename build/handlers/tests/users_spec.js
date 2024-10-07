@@ -23,6 +23,9 @@ describe('User Handler', () => {
                 username: 'testieT',
                 password: 'Test1234!',
                 isAdmin: false,
+                subscription_start: new Date(),
+                subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+                progress: 0,
             })
                 .set('Accepted', 'application/json');
             token = 'Bearer ' + res.body;
@@ -55,6 +58,9 @@ describe('User Handler', () => {
                 username: 'testieTs',
                 password: 'Test1234!',
                 isAdmin: false,
+                subscription_start: new Date(),
+                subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+                progress: 0,
             })
                 .set('Accepted', 'application/json');
             expect(res.status).toEqual(200);

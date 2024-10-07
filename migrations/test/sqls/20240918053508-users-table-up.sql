@@ -9,5 +9,8 @@ CREATE TABLE IF NOT EXISTS users (
         martial_art VARCHAR(255),
         username VARCHAR(255) UNIQUE NOT NULL, 
         password VARCHAR(100) NOT NULL,
-        isAdmin BOOLEAN
+        isAdmin BOOLEAN DEFAULT FALSE, 
+        subscription_start TIMESTAMP,
+        subscription_end TIMESTAMP,
+        progress INTEGER DEFAULT 0   
         );
