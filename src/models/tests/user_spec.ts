@@ -20,6 +20,7 @@ const test_user: User = {
 	), // One year from start
 	progress: 0,
 	active: true,
+	subscription_tier: 0,
 };
 
 describe('UserStore Model', () => {

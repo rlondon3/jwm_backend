@@ -24,6 +24,7 @@ export type User = {
 	subscription_end: Date;
 	progress: number;
 	active: boolean;
+	subscription_tier: number; // 0-free, 1-basic, 2-full
 };
 
 export class UserStore {
@@ -53,7 +54,7 @@ export class UserStore {
 		try {
 			const conn: PoolClient = await client.connect();
 			const sql =
-				'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin, subscription_start, subscription_end, progress, active) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *';
+				'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin, subscription_start, subscription_end, progress, active, subscription_tier) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *';
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}.processs.env`,
 				parseInt(`${SALT_ROUNDS}.process.env` as string)
@@ -73,6 +74,7 @@ export class UserStore {
 				user.subscription_end,
 				user.progress,
 				user.active,
+				user.subscription_tier,
 			]);
 			conn.release();
 			return res.rows[0];
@@ -84,7 +86,7 @@ export class UserStore {
 	async update(user: User, _id?: number): Promise<User> {
 		try {
 			const sql =
-				'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10), subscription_start=($11), subscription_end=($12), progress=($13), active=($14) WHERE id=($15) RETURNING *';
+				'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10), subscription_start=($11), subscription_end=($12), progress=($13), active=($14), subscription_tier=($15) WHERE id=($16) RETURNING *';
 			const conn: PoolClient = await client.connect();
 			const hash = bcrypt.hashSync(
 				user.password + `${PEPPER}`,
@@ -105,6 +107,7 @@ export class UserStore {
 				user.subscription_end,
 				user.progress,
 				user.active,
+				user.subscription_tier,
 				user.id,
 			]);
 			conn.release();
@@ -193,6 +196,7 @@ export function handleUserErrors(user: User) {
 			),
 		progress: number().min(0).max(100).required(),
 		active: boolean().required(),
+		subscription_tier: number().required().positive().integer(),
 	});
 	return userSchema.validate(user);
 }

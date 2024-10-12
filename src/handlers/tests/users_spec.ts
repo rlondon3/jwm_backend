@@ -29,6 +29,7 @@ describe('User Handler', () => {
 					),
 					progress: 0,
 					active: true,
+					subscription_tier: 0,
 				})
 				.set('Accepted', 'application/json');
 			token = 'Bearer ' + res.body;
@@ -67,6 +68,7 @@ describe('User Handler', () => {
 					),
 					progress: 0,
 					active: true,
+					subscription_tier: 0,
 				})
 				.set('Accepted', 'application/json');
 			expect(res.status).toEqual(200);
