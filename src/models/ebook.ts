@@ -91,8 +91,8 @@ export class EbookStore {
 	}
 }
 
-export function handleUserErrors(ebook: Ebook) {
-	let userSchema = object({
+export function handleEbookErrors(ebook: Ebook) {
+	let ebookSchema = object({
 		title: string().required(),
 		chapter_count: number().required(),
 		chapters: array()
@@ -107,5 +107,5 @@ export function handleUserErrors(ebook: Ebook) {
 		interactive_content: boolean().default(false),
 		ai: boolean().default(false),
 	});
-	return userSchema.validate(ebook);
+	return ebookSchema.validate(ebook);
 }
