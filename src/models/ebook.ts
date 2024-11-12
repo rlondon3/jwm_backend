@@ -1,20 +1,19 @@
 import client from '../database';
 import { PoolClient } from 'pg';
-import { object, string, number, boolean, array } from 'yup';
+import { object, string, number, array } from 'yup';
 import { Chapter, ChapterStore } from './chapter';
 
 export type Ebook = {
 	id?: number;
 	title: string;
 	chapter_count: number;
-	interactive_content: boolean;
-	ai: boolean;
+	chapters: Chapter;
 };
 
 export class EbookStore {
 	private chapterStore = new ChapterStore();
 
-	async showWithChapters(id: number): Promise<Ebook & { chapters: Chapter[] }> {
+	async showWithChapters(id: number): Promise<Ebook & { chapters: Chapter }> {
 		try {
 			const ebookSql = 'SELECT * FROM ebooks WHERE id=$1;';
 			const chaptersSql = 'SELECT * FROM chapters WHERE ebook_id=$1;';
@@ -63,12 +62,11 @@ export class EbookStore {
 		try {
 			const conn: PoolClient = await client.connect();
 			const sql =
-				'INSERT INTO ebooks (title, chapter_count, interactive_content, ai) VALUES ($1, $2, $3, $4) RETURNING *';
+				'INSERT INTO ebooks (title, chapter_count, chapters) VALUES ($1, $2, $3) RETURNING *';
 			const res = await conn.query(sql, [
 				ebook.title,
 				ebook.chapter_count,
-				ebook.interactive_content,
-				ebook.ai,
+				ebook.chapters,
 			]);
 			conn.release();
 			return res.rows[0];
@@ -80,14 +78,12 @@ export class EbookStore {
 	async update(ebook: Ebook, _id?: number): Promise<Ebook> {
 		try {
 			const sql =
-				'UPDATE ebooks SET title=($1), chapter_count=($2), interactive_content=($3), ai=($4) WHERE id=($5) RETURNING *';
+				'UPDATE ebooks SET title=($1), chapter_count=($2), chapters=($3) WHERE id=($4) RETURNING *';
 			const conn: PoolClient = await client.connect();
 			const res = await conn.query(sql, [
 				ebook.title,
 				ebook.chapter_count,
-				ebook.interactive_content,
-				ebook.ai,
-				ebook.id,
+				ebook.chapters,
 			]);
 			conn.release();
 			return res.rows[0];
@@ -135,8 +131,6 @@ export function handleEbookErrors(ebook: Ebook) {
 				})
 			)
 			.required(),
-		interactive_content: boolean().default(false),
-		ai: boolean().default(false),
 	});
 	return ebookSchema.validate(ebook);
 }

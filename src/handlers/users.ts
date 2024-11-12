@@ -14,7 +14,7 @@ const store = new UserStore();
 const index = async (_req: Request, res: Response) => {
 	try {
 		const user = await store.index();
-		return res.json(user);
+		return res.status(200).json(user);
 	} catch (error) {
 		return res.status(400).json(error);
 	}
@@ -23,7 +23,7 @@ const index = async (_req: Request, res: Response) => {
 const show = async (req: Request, res: Response) => {
 	try {
 		const user = await store.show(parseInt(req.params.id));
-		return res.json(user);
+		return res.status(200).json(user);
 	} catch (error) {
 		return res.status(400).json(error);
 	}
@@ -69,7 +69,7 @@ const create = async (req: Request, res: Response) => {
 			`${process.env.TOKEN_SECRET}` as jwt.Secret
 		);
 
-		return res.json(token);
+		return res.status(200).json(token);
 	} catch (error) {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.message });
@@ -119,7 +119,7 @@ const update = async (req: Request, res: Response) => {
 const deletes = async (req: Request, res: Response) => {
 	try {
 		const deleteUser = await store.delete(parseInt(req.params.id));
-		return res.json(deleteUser);
+		return res.status(200).json(deleteUser);
 	} catch (error) {
 		return res.status(400).json(error);
 	}
@@ -140,7 +140,7 @@ const authenticate = async (req: Request, res: Response) => {
 				},
 				`${process.env.TOKEN_SECRET}` as jwt.Secret
 			);
-			return res.json(token);
+			return res.status(200).json(token);
 		}
 	} catch (error) {
 		return res.status(400).json(error);

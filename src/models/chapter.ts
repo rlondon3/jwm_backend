@@ -6,7 +6,7 @@ import { EbookStore } from './ebook';
 export type Chapter = {
 	id?: number;
 	ebook_id: number;
-	user_id: number; // Reference to the user
+	user_id: number;
 	title: string;
 	chapter_number: number;
 	content: string;
@@ -26,6 +26,17 @@ export class ChapterStore {
 			throw new Error(`Can't retrieve chapters: ${error}`);
 		}
 	}
+	async getChaptersByUserId(user_id: number): Promise<Chapter[]> {
+		try {
+			const sql = 'SELECT * FROM chapters WHERE user_id=($1);';
+			const conn: PoolClient = await client.connect();
+			const res = await conn.query(sql, [user_id]);
+			conn.release();
+			return res.rows;
+		} catch (error) {
+			throw new Error(`Can't retrieve chapters: ${error}`);
+		}
+	}
 	async getChapterCount(ebook_id: number): Promise<number> {
 		try {
 			const sql = 'SELECT COUNT(*) FROM chapters WHERE ebook_id = $1';
@@ -38,6 +49,17 @@ export class ChapterStore {
 			throw new Error(
 				`Could not get chapter count for ebook ${ebook_id}: ${error}`
 			);
+		}
+	}
+	async index(): Promise<Chapter[]> {
+		try {
+			const sql = 'SELECT * FROM chapters;';
+			const conn: PoolClient = await client.connect();
+			const res = await conn.query(sql);
+			conn.release();
+			return res.rows;
+		} catch (error) {
+			throw new Error(`Can't retrieve Chapters: ${error}`);
 		}
 	}
 	async show(id: number): Promise<Chapter> {
