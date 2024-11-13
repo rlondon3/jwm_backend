@@ -196,7 +196,14 @@ export function handleUserErrors(user: User) {
 			),
 		progress: number().min(0).max(100).required(),
 		active: boolean().required(),
-		subscription_tier: number().required().positive().integer(),
+		subscription_tier: number()
+			.required()
+			.integer()
+			.test(
+				'is-valid-tier',
+				'Subscription tier must be 0 or a positive number',
+				(value) => value >= 0
+			),
 	});
 	return userSchema.validate(user);
 }

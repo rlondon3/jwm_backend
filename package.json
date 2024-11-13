@@ -8,7 +8,7 @@
 	"main": "src/server.ts",
 	"scripts": {
 		"start": "node build/dist/server.js",
-		"dev": "ENV=dev tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
+		"dev": "db-migrate up:dev --env dev --verbose && ENV=dev tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
 		"dev-test": "db-migrate up:test --verbose && jasmine ./**/**/*_spec.js && db-migrate reset:test",
 		"test": "db-migrate up:test --env test --verbose && jasmine ./**/**/*_spec.js && db-migrate reset:test --env test",
 		"check-db": "PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -p 5432 -c '\\l'",
