@@ -100,14 +100,14 @@ const update = async (req: Request, res: Response) => {
 	try {
 		await handleUserErrors(user);
 
-		const updates = await store.update(user);
+		const updatedUser = await store.update(user);
 		const token = jwt.sign(
 			{
-				user: updates,
+				user: updatedUser,
 			},
 			`${process.env.TOKEN_SECRET}` as jwt.Secret
 		);
-		return res.status(200).json(token);
+		return res.status(200).json({ token, user: updatedUser });
 	} catch (error) {
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({ error: error.message });

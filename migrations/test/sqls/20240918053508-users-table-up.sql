@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
         subscription_start TIMESTAMP,
         subscription_end TIMESTAMP,
         progress INTEGER DEFAULT 0,
-        active BOOLEAN   
+        active BOOLEAN,
+        subscription_tier INTEGER   
         );
