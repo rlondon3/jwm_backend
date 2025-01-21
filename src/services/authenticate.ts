@@ -5,19 +5,29 @@ import { User } from '../models/user';
 
 dotenv.config();
 
+interface AuthRequest extends Request {
+	user: User;
+}
+
 interface TokenInterface {
 	user: User;
 	iat: number;
 }
 export const authenticationToken = (
-	req: Request,
+	req: AuthRequest,
 	res: Response,
 	next: NextFunction
 ): void => {
 	try {
 		const authHead = req.headers.authorization;
 		const token = (authHead as string).split(' ')[1];
-		jwt.verify(token, `${process.env.TOKEN_SECRET}` as jwt.Secret);
+		const decoded = jwt.verify(
+			token,
+			`${process.env.TOKEN_SECRET}` as jwt.Secret
+		);
+
+		req.user = (decoded as TokenInterface).user;
+
 		next();
 	} catch (error) {
 		res.status(400);

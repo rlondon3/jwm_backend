@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import app from '../../server';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const { SPEC_USER, SPEC_PASSWORD } = process.env;
 
 describe('POST: Test user endpoint', () => {
 	let token: string;
+	let userId: number;
 	it('POST: Test should create a user', async () => {
 		const resp = await request
 			.post('/create/user')
@@ -32,6 +34,9 @@ describe('POST: Test user endpoint', () => {
 			})
 			.set('Accepted', 'application/json');
 		token = 'Bearer ' + resp.body;
+		const decoded = jwt.decode(resp.body) as { user: { id: number } };
+		userId = decoded.user.id;
+		expect(userId).toBeDefined();
 		expect(resp.status).toEqual(200);
 	});
 	it('POST: Verify tokens of users', async () => {
@@ -42,13 +47,13 @@ describe('POST: Test user endpoint', () => {
 	});
 	it('POST: Verify token of user', async () => {
 		const resp = await request
-			.post('/verify/users/1')
+			.post(`/verify/user/${userId}`)
 			.set('Authorization', token);
 		expect(resp.body.username).toEqual('test_user');
 	});
 	it('PUT: Should update the user', async () => {
 		const resp = await request
-			.put('/users/1')
+			.put(`/user/${userId}`)
 			.set('Authorization', token)
 			.send({
 				firstname: 'Ralphie',
@@ -69,11 +74,11 @@ describe('POST: Test user endpoint', () => {
 			})
 			.set('Accepted', 'application/json');
 		expect(resp.status).toEqual(200);
-		expect(resp.body.firstname).toEqual('Ralphie');
+		expect(resp.body.user.firstname).toEqual('Ralphie');
 	});
 	it('AUTHENTICATE: Authentication should fail', async () => {
 		const resp = await request
-			.post('/users/authenticate')
+			.post('/user/authenticate')
 			.send({
 				username: 'test_user5',
 				password: SPEC_PASSWORD as string,
@@ -83,7 +88,7 @@ describe('POST: Test user endpoint', () => {
 	});
 	it('DELETE: Tests deletion of user', async () => {
 		const resp = await request
-			.delete('/users/1')
+			.delete(`/user/${userId}`)
 			.set('Authorization', token)
 			.set('Accepted', 'application/json');
 		expect(resp.status).toBe(200);

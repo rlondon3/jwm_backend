@@ -38,7 +38,7 @@ class UserStore {
     async create(user) {
         try {
             const conn = await database_1.default.connect();
-            const sql = 'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin, subscription_start, subscription_end, progress, active) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *';
+            const sql = 'INSERT INTO users (firstname, lastname, age, city, country, email, martial_art, username, password, isAdmin, subscription_start, subscription_end, progress, active, subscription_tier) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *';
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}.processs.env`, parseInt(`${SALT_ROUNDS}.process.env`));
             const res = await conn.query(sql, [
                 user.firstname,
@@ -55,6 +55,7 @@ class UserStore {
                 user.subscription_end,
                 user.progress,
                 user.active,
+                user.subscription_tier,
             ]);
             conn.release();
             return res.rows[0];
@@ -66,7 +67,7 @@ class UserStore {
     // tslint:disable-next-line: no-unused-variable
     async update(user, _id) {
         try {
-            const sql = 'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10), subscription_start=($11), subscription_end=($12), progress=($13), active=($14) WHERE id=($15) RETURNING *';
+            const sql = 'UPDATE users SET firstname=($1), lastname=($2), age=($3), city=($4), country=($5), email=($6), martial_art=($7), username=($8), password=($9), isAdmin=($10), subscription_start=($11), subscription_end=($12), progress=($13), active=($14), subscription_tier=($15) WHERE id=($16) RETURNING *';
             const conn = await database_1.default.connect();
             const hash = bcrypt_1.default.hashSync(user.password + `${PEPPER}`, parseInt(`${SALT_ROUNDS}`));
             const res = await conn.query(sql, [
@@ -84,6 +85,7 @@ class UserStore {
                 user.subscription_end,
                 user.progress,
                 user.active,
+                user.subscription_tier,
                 user.id,
             ]);
             conn.release();
@@ -95,7 +97,7 @@ class UserStore {
     }
     async delete(id) {
         try {
-            const sql = 'DELETE FROM users WHERE id=($1);';
+            const sql = 'DELETE FROM users WHERE id=($1) RETURNING *;';
             const conn = await database_1.default.connect();
             const res = await conn.query(sql, [id]);
             conn.release();
@@ -169,6 +171,10 @@ function handleUserErrors(user) {
             .min(yup.ref('subscription_start'), 'Subscription end date must be after the start date.'),
         progress: (0, yup_1.number)().min(0).max(100).required(),
         active: (0, yup_1.boolean)().required(),
+        subscription_tier: (0, yup_1.number)()
+            .required()
+            .integer()
+            .test('is-valid-tier', 'Subscription tier must be 0 or a positive number', (value) => value >= 0),
     });
     return userSchema.validate(user);
 }

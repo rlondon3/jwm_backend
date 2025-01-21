@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS users (
         progress INTEGER DEFAULT 0,
         active BOOLEAN,
         subscription_tier INTEGER   
-        );
+);

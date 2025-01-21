@@ -19,6 +19,7 @@ const test_user = {
     subscription_end: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // One year from start
     progress: 0,
     active: true,
+    subscription_tier: 0,
 };
 describe('UserStore Model', () => {
     it('should have an index method', () => {

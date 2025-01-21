@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import app from '../../server';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ const request = supertest(app);
 describe('User Handler', () => {
 	describe('Test user handler endpoint', () => {
 		let token: string;
+		let userId: number;
 		it('POST should create a user', async () => {
 			const res = await request
 				.post('/create/user')
@@ -33,6 +35,9 @@ describe('User Handler', () => {
 				})
 				.set('Accepted', 'application/json');
 			token = 'Bearer ' + res.body;
+			const decoded = jwt.decode(res.body) as { user: { id: number } };
+			userId = decoded.user.id;
+			expect(userId).toBeDefined();
 			expect(res.status).toEqual(200);
 		});
 		it('should verify Users with Authentication Token', async () => {
@@ -43,13 +48,13 @@ describe('User Handler', () => {
 		});
 		it('should verify user with authentication token and get user by id', async () => {
 			const res = await request
-				.post('/verify/user/1')
+				.post(`/verify/user/${userId}`)
 				.set('Authorization', token);
 			expect(res.status).toEqual(200);
 		});
 		it('should update the user', async () => {
 			const res = await request
-				.put('/user/1')
+				.put(`/user/${userId}`)
 				.set('Authorization', token)
 				.send({
 					firstname: 'Test',
@@ -85,7 +90,7 @@ describe('User Handler', () => {
 		});
 		it('should delete the user', async () => {
 			const res = await request
-				.delete('/user/1')
+				.delete(`/user/${userId}`)
 				.set('Authorization', token)
 				.set('Accepted', 'application/json');
 			expect(res.status).toEqual(200);

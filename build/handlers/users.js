@@ -10,7 +10,7 @@ const store = new user_1.UserStore();
 const index = async (_req, res) => {
     try {
         const user = await store.index();
-        return res.json(user);
+        return res.status(200).json(user);
     }
     catch (error) {
         return res.status(400).json(error);
@@ -19,7 +19,7 @@ const index = async (_req, res) => {
 const show = async (req, res) => {
     try {
         const user = await store.show(parseInt(req.params.id));
-        return res.json(user);
+        return res.status(200).json(user);
     }
     catch (error) {
         return res.status(400).json(error);
@@ -41,6 +41,7 @@ const create = async (req, res) => {
         subscription_end: req.body.subscription_end,
         progress: req.body.progress,
         active: req.body.active,
+        subscription_tier: req.body.subscription_tier,
     };
     try {
         await (0, user_1.handleUserErrors)(user);
@@ -56,7 +57,7 @@ const create = async (req, res) => {
         const token = jsonwebtoken_1.default.sign({
             user: newUser,
         }, `${process.env.TOKEN_SECRET}`);
-        return res.json(token);
+        return res.status(200).json(token);
     }
     catch (error) {
         if (error.name === 'ValidationError') {
@@ -82,14 +83,15 @@ const update = async (req, res) => {
         subscription_end: req.body.subscription_end,
         progress: req.body.progress,
         active: req.body.active,
+        subscription_tier: req.body.subscription_tier,
     };
     try {
         await (0, user_1.handleUserErrors)(user);
-        const updates = await store.update(user);
+        const updatedUser = await store.update(user);
         const token = jsonwebtoken_1.default.sign({
-            user: updates,
+            user: updatedUser,
         }, `${process.env.TOKEN_SECRET}`);
-        return res.status(200).json(token);
+        return res.status(200).json({ token, user: updatedUser });
     }
     catch (error) {
         if (error.name === 'ValidationError') {
@@ -101,7 +103,7 @@ const update = async (req, res) => {
 const deletes = async (req, res) => {
     try {
         const deleteUser = await store.delete(parseInt(req.params.id));
-        return res.json(deleteUser);
+        return res.status(200).json(deleteUser);
     }
     catch (error) {
         return res.status(400).json(error);
@@ -117,7 +119,7 @@ const authenticate = async (req, res) => {
             const token = jsonwebtoken_1.default.sign({
                 user: authUser,
             }, `${process.env.TOKEN_SECRET}`);
-            return res.json(token);
+            return res.status(200).json(token);
         }
     }
     catch (error) {

@@ -9,7 +9,8 @@ const authenticationToken = (req, res, next) => {
     try {
         const authHead = req.headers.authorization;
         const token = authHead.split(' ')[1];
-        jsonwebtoken_1.default.verify(token, `${process.env.TOKEN_SECRET}`);
+        const decoded = jsonwebtoken_1.default.verify(token, `${process.env.TOKEN_SECRET}`);
+        req.user = decoded.user;
         next();
     }
     catch (error) {
