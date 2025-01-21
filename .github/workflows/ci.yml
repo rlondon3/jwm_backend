@@ -85,6 +85,14 @@ jobs:
           echo "PostgreSQL is not ready yet"
           sleep 5
           done
+          - name: Log Container Host Information
+          run: |
+            echo "Logging PostgreSQL Container Host Information..."
+            docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
+            echo "Docker Hostname:"
+            docker exec postgres sh -c "hostname"
+            echo "Docker Host File Contents:"
+            docker exec postgres sh -c "cat /etc/hosts"
 
       - name: Create Test Database
         run: |
@@ -97,12 +105,6 @@ jobs:
         run: |
           docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
 
-      - name: Verify Test Database and List Tables
-        run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c '\dt'"
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c '\d'"
-        #   docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c 'DROP TABLE IF EXISTS users CASCADE;'"
-        #   Need to discover why the test are failing: possibly not creating the table?
       - name: Run Backend tests
         run: |
           pnpm test
