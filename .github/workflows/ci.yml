@@ -85,14 +85,14 @@ jobs:
           echo "PostgreSQL is not ready yet"
           sleep 5
           done
-          - name: Log Container Host Information
-          run: |
-            echo "Logging PostgreSQL Container Host Information..."
-            docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
-            echo "Docker Hostname:"
-            docker exec postgres sh -c "hostname"
-            echo "Docker Host File Contents:"
-            docker exec postgres sh -c "cat /etc/hosts"
+      - name: Log Container Host Information
+        run: |
+          echo "Logging PostgreSQL Container Host Information..."
+          docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
+          echo "Docker Hostname:"
+          docker exec postgres sh -c "hostname"
+          echo "Docker Host File Contents:"
+          docker exec postgres sh -c "cat /etc/hosts"
 
       - name: Create Test Database
         run: |
