@@ -22,7 +22,7 @@ else if (ENV === 'test') {
         database: POSTGRES_DB_TEST,
         user: POSTGRES_USER,
         password: POSTGRES_PASSWORD,
-        port: Number(DB_PORT),
+        port: 5432,
     });
 }
 else if (ENV === 'prod') {
