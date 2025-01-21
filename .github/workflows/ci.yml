@@ -15,27 +15,36 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        options: >
+          --health-cmd="pg_isready -U POSTGRES_USER"
         env:
-          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ vars.POSTGRES_DB_TEST }}
-        options: >-
-          --health-cmd="pg_isready -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB_TEST }}"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB_TEST: ${{ env.POSTGRES_DB_TEST }}
+        ports:
+          - 5432:5432
+      pgadmin:
+        image: dpage/pgadmin4:latest
+        ports:
+          - 5050:80
+        env:
+          PGADMIN_DEFAULT_EMAIL: ${{ env.PGADMIN_DEFAULT_EMAIL }}
+          PGADMIN_DEFAULT_PASSWORD: ${{ env.PGADMIN_DEFAULT_PASSWORD }}
 
     env:
       POSTGRES_HOST: localhost
       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
       POSTGRES_DB_TEST: ${{ vars.POSTGRES_DB_TEST }}
+      POSTGRES_DB_PROD: POSTGRES_DB_PROD
       POSTGRES_USER: ${{ vars.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-      DB_PORT: 5432
+      PGADMIN_DEFAULT_EMAIL: ${{ vars.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ vars.PGADMIN_DEFAULT_PASSWORD }}
+      DB_PORT: ${{ vars.DB_PORT }}
       TOKEN_SECRET: ${{ vars.TOKEN_SECRET }}
       SALT_ROUNDS: ${{ vars.SALT_ROUNDS }}
       PEPPER: ${{ vars.PEPPER }}
-      ENV: test
+      ENV: ${{ VARS.ENV }}
 
     steps:
       - name: Checkout repository
@@ -51,26 +60,49 @@ jobs:
         with:
           version: 9.5.0
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Show current directory
+        run: |
+          echo "Current directory is: $(pwd)"
+          echo "Listing the contents:"
+          ls -la
+
+      - name: Install Backend dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+
+      - name: Create Docker Network
+        run: |
+          docker network create github_network || true
+      #5433 for test in ci/ 5432 for local
+      - name: Start PostgreSQL Container
+        run: |
+          docker run --name postgres_container --network github_network -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB_TEST=$POSTGRES_DB_TEST -p 5433:5432 -d postgres:latest
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres sh -c "pg_isready -U $POSTGRES_USER -h localhost -p 5432"; do
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 5
+          until docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "pg_isready -h postgres_container -p 5432 -U $POSTGRES_USER"; do
+          echo "PostgreSQL is not ready yet"
+          sleep 5
           done
 
       - name: Create Test Database
         run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres sh -c "psql -U $POSTGRES_USER -h localhost -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
+          docker exec postgres_container sh -c "echo \$POSTGRES_USER; echo \$POSTGRES_PASSWORD; echo \$POSTGRES_DB_TEST; echo \postgres_container;"
+          docker exec postgres_container sh -c "pg_isready -U $POSTGRES_USER -h postgres_container -p 5432"
+          docker exec postgres_container sh -c "PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h postgres_container -p 5432 -c '\l'"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -c 'CREATE DATABASE $POSTGRES_DB_TEST;'"
 
-      - name: Run database migrations
-        run: pnpm db-migrate up:test --env test --verbose
-
-      - name: Debug Test Database
+      - name: Verify Test Database
         run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres sh -c "psql -U $POSTGRES_USER -h localhost -p 5432 -d $POSTGRES_DB_TEST -c '\dt'"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -l"
 
+      - name: Verify Test Database and List Tables
+        run: |
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c '\dt'"
+          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c '\d'"
+        #   docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres_container sh -c "psql -U $POSTGRES_USER -h postgres_container -p 5432 -d $POSTGRES_DB_TEST -c 'DROP TABLE IF EXISTS users CASCADE;'"
+        #   Need to discover why the test are failing: possibly not creating the table?
       - name: Run Backend tests
-        run: pnpm test
+        run: |
+          pnpm test
