@@ -83,9 +83,10 @@ jobs:
           done
           '
 
-      - name: Create Test Database
+      - name: Setup Test Database
         run: |
           PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d postgres -c 'SELECT version();'
+          PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d postgres -c 'DROP DATABASE IF EXISTS ${{ vars.POSTGRES_DB_TEST }};'
           PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d postgres -c 'CREATE DATABASE ${{ vars.POSTGRES_DB_TEST }};'
 
       - name: Verify Test Database
