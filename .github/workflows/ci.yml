@@ -89,15 +89,6 @@ jobs:
           PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d postgres -c 'DROP DATABASE IF EXISTS ${{ vars.POSTGRES_DB_TEST }};'
           PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d postgres -c 'CREATE DATABASE ${{ vars.POSTGRES_DB_TEST }};'
 
-      - name: Verify Test Database
-        run: |
-          PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB_TEST }} -c '\l'
-
-      - name: Verify Test Database and List Tables
-        run: |
-          PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB_TEST }} -c '\dt'
-          PGPASSWORD=${{ vars.POSTGRES_PASSWORD }} psql -h localhost -p 5433 -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB_TEST }} -c '\d'
-
       - name: Run Backend tests
         run: |
           pnpm test
