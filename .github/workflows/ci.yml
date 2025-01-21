@@ -15,27 +15,40 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        options: >
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
         env:
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ vars.POSTGRES_DB_TEST }}
-        options: >-
-          --health-cmd="pg_isready -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB_TEST }}"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
+        ports:
+          - 5432:5432
+
+      pgadmin:
+        image: dpage/pgadmin4:latest
+        ports:
+          - 5050:80
+        env:
+          PGADMIN_DEFAULT_EMAIL: ${{ vars.PGADMIN_DEFAULT_EMAIL }}
+          PGADMIN_DEFAULT_PASSWORD: ${{ vars.PGADMIN_DEFAULT_PASSWORD }}
 
     env:
-      POSTGRES_HOST: postgres_container:5432
+      POSTGRES_HOST: localhost
       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
       POSTGRES_DB_TEST: ${{ vars.POSTGRES_DB_TEST }}
+      POSTGRES_DB_PROD: POSTGRES_DB_PROD
       POSTGRES_USER: ${{ vars.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-      DB_PORT: 5432
+      PGADMIN_DEFAULT_EMAIL: ${{ vars.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ vars.PGADMIN_DEFAULT_PASSWORD }}
+      DB_PORT: ${{ vars.DB_PORT }}
       TOKEN_SECRET: ${{ vars.TOKEN_SECRET }}
       SALT_ROUNDS: ${{ vars.SALT_ROUNDS }}
       PEPPER: ${{ vars.PEPPER }}
-      ENV: test
+      ENV: ${{ vars.ENV }}
 
     steps:
       - name: Checkout repository
@@ -51,22 +64,37 @@ jobs:
         with:
           version: 9.5.0
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Show current directory
+        run: |
+          echo "Current directory is: $(pwd)"
+          echo "Listing the contents:"
+          ls -la
+
+      - name: Install Backend dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
 
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h postgres -p 5432 -U $POSTGRES_USER; do
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 5
+          echo "PostgreSQL is not ready yet"
+          sleep 5
           done
 
-      - name: Run database migrations
-        run: pnpm db-migrate up:test --env test --verbose
+      - name: Create Test Database
+        run: |
+          psql -U $POSTGRES_USER -h postgres -p 5432 -c "CREATE DATABASE $POSTGRES_DB_TEST;"
+
+      - name: Verify Test Database
+        run: |
+          psql -U $POSTGRES_USER -h postgres -p 5432 -l
+
+      - name: Verify Test Database and List Tables
+        run: |
+          psql -U $POSTGRES_USER -h postgres -p 5432 -d $POSTGRES_DB_TEST -c '\dt'
+          psql -U $POSTGRES_USER -h postgres -p 5432 -d $POSTGRES_DB_TEST -c '\d'
 
       - name: Run Backend tests
-        run: pnpm test
-
-      - name: Debug Test Database
         run: |
-          docker exec -e PGPASSWORD=$POSTGRES_PASSWORD postgres sh -c "psql -U $POSTGRES_USER -h postgres -p 5432 -d $POSTGRES_DB_TEST -c '\dt'"
+          pnpm test
