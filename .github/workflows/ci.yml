@@ -77,7 +77,7 @@ jobs:
       #5433 for test in ci/ 5432 for local
       - name: Start PostgreSQL Container
         run: |
-          docker run --name postgres_container --network github_network -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB_TEST=$POSTGRES_DB_TEST -p 5433:5432 -d postgres:latest
+          docker run --name postgres_container --network github_network -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB_TEST=$POSTGRES_DB_TEST -p 5432:5432 -d postgres:latest
 
       - name: Wait for PostgreSQL to be ready
         run: |
