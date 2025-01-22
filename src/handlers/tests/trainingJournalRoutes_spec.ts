@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const request = supertest(app);
-const { SPEC_USER, SPEC_PASSWORD } = process.env;
+const { SPEC_PASSWORD } = process.env;
 
 describe('Training Journal Endpoints', () => {
 	let token: string;
@@ -17,9 +17,9 @@ describe('Training Journal Endpoints', () => {
 			age: 30,
 			city: 'Atlanta',
 			country: 'USA',
-			email: 'ralphieLondon@store.com',
+			email: 'jounralGuy@store.com',
 			martial_art: 'Taijiquan',
-			username: SPEC_USER,
+			username: 'journalGuy',
 			password: SPEC_PASSWORD,
 			isAdmin: false,
 			subscription_start: '2024-11-12T00:00:00.000Z',

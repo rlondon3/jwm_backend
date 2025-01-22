@@ -7,11 +7,12 @@ dotenv.config();
 
 const request = supertest(app);
 
-const { SPEC_USER, SPEC_PASSWORD } = process.env;
+const { SPEC_PASSWORD } = process.env;
 
 describe('POST: Test user endpoint', () => {
 	let token: string;
 	let userId: number;
+
 	it('POST: Test should create a user', async () => {
 		const resp = await request
 			.post('/create/user')
@@ -21,9 +22,9 @@ describe('POST: Test user endpoint', () => {
 				age: 30,
 				city: 'Atlanta',
 				country: 'USA',
-				email: 'ralphieLondon@store.com',
+				email: 'rLondo@store.com',
 				martial_art: 'Taijiquan',
-				username: SPEC_USER,
+				username: 'taichithumper',
 				password: SPEC_PASSWORD,
 				isAdmin: false,
 				subscription_start: '2024-11-12T00:00:00.000Z',
@@ -49,7 +50,7 @@ describe('POST: Test user endpoint', () => {
 		const resp = await request
 			.post(`/verify/user/${userId}`)
 			.set('Authorization', token);
-		expect(resp.body.username).toEqual('test_user');
+		expect(resp.body.username).toEqual('taichithumper');
 	});
 	it('PUT: Should update the user', async () => {
 		const resp = await request
@@ -61,9 +62,9 @@ describe('POST: Test user endpoint', () => {
 				age: 30,
 				city: 'Atlanta',
 				country: 'USA',
-				email: 'ralphieLondon@store.com',
+				email: 'rLondo@store.com',
 				martial_art: 'Baguazhang',
-				username: SPEC_USER,
+				username: 'taichithumper',
 				password: SPEC_PASSWORD,
 				isAdmin: false,
 				subscription_start: '2024-11-12T00:00:00.000Z',

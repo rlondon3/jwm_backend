@@ -7,7 +7,7 @@ const dotenv_1 = tslib_1.__importDefault(require("dotenv"));
 const jsonwebtoken_1 = tslib_1.__importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
 const request = (0, supertest_1.default)(server_1.default);
-const { SPEC_USER, SPEC_PASSWORD } = process.env;
+const { SPEC_PASSWORD } = process.env;
 describe('POST: Test user endpoint', () => {
     let token;
     let userId;
@@ -20,9 +20,9 @@ describe('POST: Test user endpoint', () => {
             age: 30,
             city: 'Atlanta',
             country: 'USA',
-            email: 'ralphieLondon@store.com',
+            email: 'rLondo@store.com',
             martial_art: 'Taijiquan',
-            username: SPEC_USER,
+            username: 'taichithumper',
             password: SPEC_PASSWORD,
             isAdmin: false,
             subscription_start: '2024-11-12T00:00:00.000Z',
@@ -48,7 +48,7 @@ describe('POST: Test user endpoint', () => {
         const resp = await request
             .post(`/verify/user/${userId}`)
             .set('Authorization', token);
-        expect(resp.body.username).toEqual('test_user');
+        expect(resp.body.username).toEqual('taichithumper');
     });
     it('PUT: Should update the user', async () => {
         const resp = await request
@@ -60,9 +60,9 @@ describe('POST: Test user endpoint', () => {
             age: 30,
             city: 'Atlanta',
             country: 'USA',
-            email: 'ralphieLondon@store.com',
+            email: 'rLondo@store.com',
             martial_art: 'Baguazhang',
-            username: SPEC_USER,
+            username: 'taichithumper',
             password: SPEC_PASSWORD,
             isAdmin: false,
             subscription_start: '2024-11-12T00:00:00.000Z',
