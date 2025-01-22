@@ -46,6 +46,8 @@ jobs:
       DB_PORT: 5433
       TOKEN_SECRET: ${{ vars.TOKEN_SECRET }}
       SALT_ROUNDS: ${{ vars.SALT_ROUNDS }}
+      SPEC_USER: ${{ vars.SPEC_USER }}
+      SPEC_PASSWORD: ${{ vars.SPEC_PASSWORD }}
       PEPPER: ${{ vars.PEPPER }}
       ENV: ${{ vars.ENV }}
 
